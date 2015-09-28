@@ -87,6 +87,19 @@ class Configuration
         return $suites;
     }
 
+    public function getSuitesName()
+    {
+        if (!$this->xml) {
+            return null;
+        }
+        $nodes = $this->xml->xpath('//testsuites/testsuite');
+        $names = array();
+        while (list(, $node) = each($nodes)) {
+           $names[] = (string)$node['name'];
+        }
+        return $names;
+    }
+
     /**
      * Return the contents of the <testsuite> nodes
      * contained in a PHPUnit configuration
@@ -140,10 +153,12 @@ class Configuration
      * @param $path
      * @return array|string[]
      */
+    public $count=0;
+
     public function getSuitePaths($path)
     {
         $real = realpath($this->getConfigDir() . $path);
-
+        $this->count++;
         if ($real !== false) {
             return array($real);
         }
@@ -158,7 +173,6 @@ class Configuration
 
             return $paths;
         }
-
         throw new \RuntimeException("Suite path $path could not be found");
     }
 
